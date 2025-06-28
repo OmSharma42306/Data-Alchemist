@@ -8,7 +8,7 @@ export const useDataUpdater = () => {
   const currentData = useRecoilValue(dataState)
 
   const updateData = (type: "clients" | "workers" | "tasks", rowIndex: number, field: string, value: any) => {
-    const newData = { ...currentData }
+    const newData = { ...currentData,rules:[] }
     const updatedItem = { ...newData[type][rowIndex], [field]: value }
     newData[type][rowIndex] = updatedItem
 

@@ -56,7 +56,7 @@ export default function FileUploader() {
 
         // Run validation
         const updatedData = { ...data, [type]: normalizedData }
-        const validationResults = validateAllData(updatedData)
+        const validationResults = validateAllData({...updatedData,rules:[]})
         setValidation(validationResults)
       } catch (error) {
         setUploadStatus((prev) =>

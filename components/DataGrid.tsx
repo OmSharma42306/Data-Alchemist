@@ -46,7 +46,7 @@ export default function DataGrid() {
 
   // 2. Then, update the validation AFTER state update is scheduled
   setTimeout(() => {
-    const newValidation = validateAllData(updatedData)
+    const newValidation = validateAllData({...updatedData,rules:[]}) // added rules explicitly 
     setValidation(newValidation)
   }, 0)
 
