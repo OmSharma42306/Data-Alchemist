@@ -1,12 +1,13 @@
 "use client"
 
 import { RecoilRoot } from "recoil"
+import DataValidationApp from "@/components/DataValidationApp"
 
 export default function Home() {
   return (
     <RecoilRoot>
       <div className="min-h-screen bg-background">
-        Hi
+        <DataValidationApp />
       </div>
     </RecoilRoot>
   )
