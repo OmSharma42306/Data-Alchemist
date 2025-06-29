@@ -11,6 +11,7 @@ import ValidationSummary from "./ValidationSummary"
 import ExportPanel from "./ExportPanel"
 import { Upload, Grid, Settings, BarChart3, Download, AlertTriangle } from "lucide-react"
 
+
 export default function DataValidationApp() {
   const [activeTab, setActiveTab] = useState("upload")
 
@@ -26,7 +27,7 @@ export default function DataValidationApp() {
           <TabsTrigger value="upload" className="flex items-center gap-2">
             <Upload className="w-4 h-4" />
             Upload
-          </TabsTrigger>
+          </TabsTrigger>          
           <TabsTrigger value="grid" className="flex items-center gap-2">
             <Grid className="w-4 h-4" />
             Data Grid

@@ -1,5 +1,4 @@
 import * as XLSX from "xlsx"
-// @ts-ignore
 import Papa from "papaparse"
 
 export const parseFile = async (file: File): Promise<any[]> => {
