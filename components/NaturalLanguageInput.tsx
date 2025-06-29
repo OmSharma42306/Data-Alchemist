@@ -6,12 +6,22 @@ import { Input } from "@/components/ui/input"
 import { useRecoilState, useRecoilValue } from "recoil"
 import { dataState, rulesState } from "@/lib/recoil/atoms"
 import { v4 as uuidv4 } from "uuid"
+import { useEffect } from "react"
 
-export default function NaturalLanguageInput() {
+export default function NaturalLanguageInput({pageType}:any) {
   const [query, setQuery] = useState("")
   const [result, setResult] = useState<any[]>([])
   const [rules, setRules] = useRecoilState(rulesState)
+  const [placeholders,setPlaceHolders] = useState("");
   const data = useRecoilValue(dataState)
+  
+  useEffect(() => {
+  if (pageType === "rules") {
+    setPlaceHolders("Add rule: Design and QA must run together");
+  } else {
+    setPlaceHolders("Ask: Show tasks in phase 2 with SkillA");
+  }
+}, [pageType]);
 
   const handleSearch = () => {
     const filtered = data.tasks.filter((task) => {
@@ -22,33 +32,76 @@ export default function NaturalLanguageInput() {
     setResult(filtered)
   }
 
-  const handleRuleConvert = () => {
-    if (query.toLowerCase().includes("must run together")) {
-      const taskNames = query.match(/\b\w+/g) || []
-      const t1 = data.tasks.find((t) => query.includes(t.title))
-      const t2 = data.tasks.find((t) => t !== t1 && query.includes(t.title))
+  // const handleRuleConvert = () => {
+  //   if (query.toLowerCase().includes("must run together")) {
+  //     const taskNames = query.match(/\b\w+/g) || []
+  //     const t1 = data.tasks.find((t) => query.includes(t.title))
+  //     const t2 = data.tasks.find((t) => t !== t1 && query.includes(t.title))
 
-      if (t1 && t2) {
-        const newRule = {
-          id: uuidv4(),
-          type: "co-run",
-          name: `${t1.title} + ${t2.title} must run together`,
-          description: `Ensure ${t1.title} and ${t2.title} are co-scheduled`,
-          conditions: {
-            task1: t1.taskId,
-            task2: t2.taskId,
-          },
-          actions: {},
-        }
-        setRules((prev) => [...prev, newRule])
-        alert("Rule created successfully ✨")
-      } else {
-        alert("Could not find matching task names")
-      }
+  //     if (t1 && t2) {
+  //       const newRule = {
+  //         id: uuidv4(),
+  //         type: "co-run",
+  //         name: `${t1.title} + ${t2.title} must run together`,
+  //         description: `Ensure ${t1.title} and ${t2.title} are co-scheduled`,
+  //         conditions: {
+  //           task1: t1.taskId,
+  //           task2: t2.taskId,
+  //         },
+  //         actions: {},
+  //       }
+  //       setRules((prev) => [...prev, newRule])
+  //       alert("Rule created successfully ✨")
+  //     } else {
+  //       alert("Could not find matching task names")
+  //     }
+  //   } else {
+  //     alert("Currently only 'must run together' rules are supported")
+  //   }
+//   // }
+//   const handleRuleConvert = async () => {
+//   const res = await fetch("/api/ai-rule-converter", {
+//     method: "POST",
+//     body: JSON.stringify({ prompt: query }),
+//     headers: { "Content-Type": "application/json" },
+//   });
+
+//   const data = await res.json();
+  
+//   if (data.result && data.result.type) {
+//     setRules((prev) => [...prev, { id: uuidv4(), ...data.result }]);
+//     alert("AI Rule created successfully ✨");
+//   } else {
+//     alert("Could not parse rule from your input.");
+//   }
+// };
+
+const handleRuleConvert = async () => {
+  const res = await fetch("/api/ai-rule-converter", {
+    method: "POST",
+    body: JSON.stringify({ prompt: query }),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  const data = await res.json();
+
+  try {
+    const parsedRule = JSON.parse(data.result.trim());
+
+    if (parsedRule && parsedRule.type) {
+      setRules((prev) => [...prev, { id: uuidv4(), ...parsedRule }]);
+      alert("AI Rule created successfully ✨");
     } else {
-      alert("Currently only 'must run together' rules are supported")
+      alert("AI response didn't match rule format.");
     }
+  } catch (err) {
+    alert("Could not parse rule from your input.");
   }
+
+  
+
+
+};
 
   return (
     <div className="space-y-4">
@@ -56,13 +109,17 @@ export default function NaturalLanguageInput() {
       <Input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Ask: Show tasks in phase 2 with SkillA or Add rule: Design and QA must run together"
+        placeholder={placeholders}
       />
       <div className="flex gap-2">
-        <Button onClick={handleSearch}>Search Tasks</Button>
-        <Button onClick={handleRuleConvert} variant="secondary">
+        {
+          pageType === "rules"? <Button onClick={handleRuleConvert} >
           Convert to Rule
         </Button>
+        : <Button onClick={handleSearch}>Search Tasks</Button>
+        }
+        {/* <Button onClick={handleSearch}>Search Tasks</Button> */}
+        
       </div>
       {result.length > 0 && (
         <div className="text-sm text-muted-foreground">

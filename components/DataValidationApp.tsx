@@ -10,7 +10,7 @@ import PrioritizationPanel from "./PrioritizationPanel"
 import ValidationSummary from "./ValidationSummary"
 import ExportPanel from "./ExportPanel"
 import { Upload, Grid, Settings, BarChart3, Download, AlertTriangle } from "lucide-react"
-
+import NaturalLanguageInput from "./NaturalLanguageInput"
 
 export default function DataValidationApp() {
   const [activeTab, setActiveTab] = useState("upload")
@@ -63,6 +63,11 @@ export default function DataValidationApp() {
         </TabsContent>
 
         <TabsContent value="grid" className="space-y-4">
+           <Card>
+            <CardContent className="px-4">
+        <NaturalLanguageInput pageType={"grid"}></NaturalLanguageInput>      
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle>Editable Data Grid</CardTitle>
@@ -87,6 +92,12 @@ export default function DataValidationApp() {
         </TabsContent>
 
         <TabsContent value="rules" className="space-y-4">
+          <Card>
+            <CardContent className="px-4">
+        <NaturalLanguageInput pageType={"rules"}></NaturalLanguageInput>      
+            </CardContent>
+          </Card>
+          
           <Card>
             <CardHeader>
               <CardTitle>Rule Builder</CardTitle>
