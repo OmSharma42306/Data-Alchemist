@@ -1,0 +1,5 @@
+clientId,name,email,priorityLevel,requestedTaskIds,groupTag,attributesJson
+C1,Acme Corp,acme@corp.com,2,T1,Tier1,"{""region"":""US""}"
+C2,,globex@corp.com,6,T2,Tier2,"{""region"":""EU""}"
+C3,Initech,initechATcorp.com,1,T5,Tier1,"{""region"":""APAC""}"
+C4,Acme Corp 2,acme2@corp.com,0,T1,Tier1,"{""region"":""US""}"

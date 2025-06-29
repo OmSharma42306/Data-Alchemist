@@ -1,0 +1,4 @@
+taskId,title,category,duration,requiredSkills,preferredPhases,maxConcurrent
+T1,Design,Creative,2,SkillA,"1-2",2
+T2,Development,Technical,0,SkillD,"2-4",1
+T3,,QA,1,SkillB,"1,3",1
