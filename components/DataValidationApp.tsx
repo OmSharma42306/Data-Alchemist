@@ -11,9 +11,39 @@ import ValidationSummary from "./ValidationSummary"
 import ExportPanel from "./ExportPanel"
 import { Upload, Grid, Settings, BarChart3, Download, AlertTriangle } from "lucide-react"
 import NaturalLanguageInput from "./NaturalLanguageInput"
+import { Button } from "./ui/button"
+import { useRecoilValue,useSetRecoilState } from "recoil"
+import { dataState,rulesState } from "@/lib/recoil/atoms"
+import { v4 as uuidv4 } from "uuid"
+ 
+type SuggestedRule = {
+  name: string
+  description: string
+  type: string
+  conditions: any
+  actions: any
+}
 
 export default function DataValidationApp() {
   const [activeTab, setActiveTab] = useState("upload")
+
+
+const [suggestedRules, setSuggestedRules] = useState<SuggestedRule[]>([])
+
+  const data = useRecoilValue(dataState)
+  const setRules = useSetRecoilState(rulesState)
+  const fetchSuggestedRules = async () => {
+  const res = await fetch("/api/ai-rule-suggestions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      tasks: data.tasks,
+      workers: data.workers,
+    }),
+  })
+  const json = await res.json()
+  setSuggestedRules(json.rules || [])
+}
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -95,8 +125,23 @@ export default function DataValidationApp() {
           <Card>
             <CardContent className="px-4">
         <NaturalLanguageInput pageType={"rules"}></NaturalLanguageInput>      
+            
             </CardContent>
+            <Button onClick={()=>{fetchSuggestedRules()}}>Get AI Rule Suggestions</Button>
           </Card>
+{suggestedRules.map((rule, idx) => (
+  <Card key={idx} className="border p-3 space-y-2">
+    <div className="font-semibold">{rule.name}</div>
+    <div className="text-sm text-muted-foreground">{rule.description}</div>
+    <Button size="sm" onClick={() => setRules(prev => [...prev, { id: uuidv4(), ...rule }])}>
+      ✅ Add to rules
+    </Button>
+    <Button variant="ghost" size="sm" onClick={() => setSuggestedRules(prev => prev.filter((_, i) => i !== idx))}>
+      ❌ Dismiss
+    </Button>
+  </Card>
+))}
+
           
           <Card>
             <CardHeader>
